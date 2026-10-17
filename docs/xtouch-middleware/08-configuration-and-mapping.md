@@ -28,90 +28,92 @@ Layers = choose which binding set the encoders use.
 
 ## 8.2 Example profile (X32)
 
+This is an excerpt of the built-in `x32-default` profile that the service writes
+to its `profiles/` folder on first run (the full file has 56 channels and six
+layers). It is the format implemented in `XTouchMiddleware/src/XTouch.Core/Profiles`.
+
 ```json
 {
-  "$schema": "./profile.schema.json",
+  "schemaVersion": 1,
   "id": "x32-default",
-  "name": "X32 – Inputs 1-32",
+  "name": "X32 – Inputs, Aux, Buses",
   "target": "x32",
   "channels": [
-    { "key": "ch01" }, { "key": "ch02" }, { "key": "ch03" }, { "key": "ch04" },
-    { "key": "ch05" }, { "key": "ch06" }, { "key": "ch07" }, { "key": "ch08" },
-    { "key": "bus01", "label": "Mon 1" }
+    { "key": "ch/01",    "label": "Ch 1",  "meter": 0,  "vars": { "solo": "01" } },
+    { "key": "ch/02",    "label": "Ch 2",  "meter": 1,  "vars": { "solo": "02" } },
+    { "key": "auxin/01", "label": "Aux 1", "meter": 32, "vars": { "solo": "33" } }
   ],
   "strip": {
-    "fader":   { "address": "{path}/mix/fader", "converter": "x32-fader" },
-    "mute":    { "address": "{path}/mix/on",    "converter": "inverted-toggle", "mode": "toggle" },
-    "solo":    { "address": "-stat/solosw/{n:00}", "converter": "toggle", "mode": "toggle" },
-    "select":  { "action": "select-channel" },
-    "name":    { "address": "{path}/config/name" },
-    "color":   { "address": "{path}/config/color", "converter": "x32-color" },
-    "meter":   { "source": "input:{n}" },
-    "encoderPush": { "action": "reset-to-default" }
+    "fader": { "address": "{key}/mix/fader",     "converter": "x32-fader" },
+    "mute":  { "address": "{key}/mix/on",        "converter": "inverted-toggle", "mode": "Toggle" },
+    "solo":  { "address": "-stat/solosw/{solo}", "converter": "toggle",          "mode": "Toggle" },
+    "name":  { "address": "{key}/config/name" },
+    "color": { "address": "{key}/config/color" }
   },
   "layers": [
-    { "id": "pan",  "button": "PAN",  "encoder": { "address": "{path}/mix/pan",       "converter": "pan",  "ring": "BoostCut", "step": 0.01, "default": 0.5 } },
-    { "id": "gain", "button": "TRACK","encoder": { "address": "{path}/preamp/trim",   "converter": "trim", "ring": "BoostCut", "step": 0.01, "default": 0.5 } },
-    { "id": "send1","button": "SEND", "encoder": { "address": "{path}/mix/01/level",  "converter": "x32-fader", "ring": "Wrap", "step": 0.01, "default": 0.0 } }
+    { "id": "pan",   "label": "PAN",    "button": "PAN",
+      "encoder": { "address": "{key}/mix/pan",      "converter": "pan",       "ring": "BoostCut", "step": 0.01, "default": 0.5 } },
+    { "id": "trim",  "label": "TRIM",   "button": "TRACK",
+      "encoder": { "address": "{key}/preamp/trim",  "converter": "x32-trim",  "ring": "BoostCut", "step": 0.01, "default": 0.5 } },
+    { "id": "send1", "label": "SEND 1", "button": "SEND",
+      "encoder": { "address": "{key}/mix/01/level", "converter": "x32-fader", "ring": "Wrap",     "step": 0.01, "default": 0 } }
   ],
   "defaultLayer": "pan",
-  "globals": {
-    "master": { "address": "main/st/mix/fader", "converter": "x32-fader" },
-    "buttons": {
-      "F1": { "address": "config/mute/1", "converter": "toggle", "mode": "toggle" },
-      "F2": { "address": "config/mute/2", "converter": "toggle", "mode": "toggle" }
-    }
-  },
-  "display": {
-    "lcdBottom": "value",
-    "sevenSegment": "BANK {bank:00}  {layer}"
+  "master": { "address": "main/st/mix/fader", "converter": "x32-fader" },
+  "masterLabel": "MAIN LR",
+  "buttons": {
+    "F1": { "address": "config/mute/1", "converter": "toggle", "mode": "Toggle" },
+    "F2": { "address": "config/mute/2", "converter": "toggle", "mode": "Toggle" }
   }
 }
 ```
 
-`display.lcdBottom` is one of `value`, `name2` or `layer`. (Profiles are
-plain JSON; if you want comments in them, load with
-`JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }`.)
+Field reference:
 
-The F1/F2 examples toggle X32 mute groups 1 and 2.
+| Field | Meaning |
+|-------|---------|
+| `channels[].key` | Unique key; usually the target's address prefix. Available as `{key}`. |
+| `channels[].label` | Fallback scribble-strip name when the target sends no name. |
+| `channels[].meter` | Index into the target's meter frame (X32 `/meters/1`). Omit for no meter. |
+| `channels[].vars` | Extra per-channel placeholders, e.g. `{solo}`. |
+| `strip.*` | Per-strip bindings. `rec` is also supported. `color` reads a 0–7 color index (mod 8). |
+| `layers[]` | Encoder layers; `button` is the X-Touch button that selects the layer. |
+| `master` | Binding for the master fader. |
+| `buttons` | Global buttons by name (`F1`…`F8`, `PLAY`, `MARKER`, …; full list at `GET /api/reference`). |
+| `mode` | `Toggle` (flip on press), `Momentary` (1 on press, 0 on release) or `Trigger` (sends `value`, default 1). |
+| `converter` | `linear`, `toggle`, `inverted-toggle`, `pan`, `x32-fader`, `x32-trim`, `x32-gain`. |
+| `ring` | `Dot`, `BoostCut`, `Wrap`, `Spread`. |
 
-Placeholders resolved per strip:
+Placeholders resolved per channel:
 
 | Placeholder | Example | Meaning |
 |-------------|---------|---------|
-| `{key}` | `ch03` | Channel key from `channels[]` |
-| `{path}` | `ch/03` | Adapter-provided address prefix for the key |
-| `{n}` / `{n:00}` | `3` / `03` | 1-based channel number within its type |
-| `{bank}` | `1` | Current bank (1-based) |
+| `{key}` | `ch/03` | The channel's key |
+| `{n}` / `{n:00}` | `3` / `03` | 1-based position in `channels[]` |
+| `{name}` / `{name:00}` | `{solo}` → `03` | Any entry in the channel's `vars` (numeric vars accept a format) |
 
-Button names (`PAN`, `F1`, `PLAY`…) are resolved to MCU notes through a
-lookup table generated from `McuConstants`, so profiles stay readable.
+Built-in surface behavior (not configurable in v1): BANK ◄/► page by 8,
+CHANNEL ◄/► and the jog wheel shift by 1, NAME/VALUE toggles the bottom LCD line
+between fader value and encoder value, encoder push resets to the layer's
+`default`, SELECT highlights a channel. The 7-segment display shows the layer's
+first two letters and the visible channel range.
 
 ## 8.3 Object model
 
-```csharp
-public sealed record Profile(
-    string Id, string Name, string Target,
-    IReadOnlyList<ChannelRef> Channels,
-    StripTemplate Strip,
-    IReadOnlyList<Layer> Layers, string DefaultLayer,
-    Globals Globals, DisplayOptions Display)
-{
-    public int ChannelCount => Channels.Count;
-    // ResolveFader / ResolveEncoder / ResolveButton / BuildStripView / StripsShowing
-    // are implemented in ProfileResolver (Core), cached per (bank, layer).
-}
+`ProfileDocument` (JSON shape) is compiled by `ProfileCompiler` into an
+immutable `CompiledProfile`:
 
-public sealed record Binding(
-    string AdapterId, ParameterAddress Address, IValueConverter Converter,
-    bool IsToggle, double Step = 0.01, double Default = 0);
+```csharp
+public sealed record Binding(ParameterAddress Address, IValueConverter Converter, ButtonMode Mode = ButtonMode.Toggle, double TriggerValue = 1);
+public sealed record EncoderBinding(ParameterAddress Address, IValueConverter Converter, RingMode Ring, double Step, double Default);
+public sealed record CompiledChannel(int Index, string Key, string Label, int? Meter,
+    Binding? Fader, Binding? Mute, Binding? Solo, Binding? Rec, Binding? Name, Binding? Color,
+    IReadOnlyDictionary<string, EncoderBinding> Encoders);
 ```
 
-**Compile once, resolve fast.** On load, `ProfileCompiler` expands every
-placeholder for every channel into a dictionary
-`(channelIndex, controlKind) → Binding` and a reverse index
-`ParameterAddress → channelIndex[]`. The engine hot path then does only
-dictionary lookups (no string formatting per fader message).
+**Compile once, resolve fast.** Every placeholder is expanded at load time, and
+a reverse index `address → channel indexes` (`ChannelsByAddress`) routes target
+changes to strips. The engine's hot path does only dictionary lookups.
 
 ## 8.4 Validation
 

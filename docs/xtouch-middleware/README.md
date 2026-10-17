@@ -22,6 +22,14 @@ more audio targets (a digital mixer, a DAW, a software mixer, etc.).
 > implementation guide for the parts they cover. Sections that are most likely
 > to need reconciling are marked **⚙ Reconcile**.
 
+## Implementation
+
+A working implementation of these documents lives in
+[`XTouchMiddleware/`](../../XTouchMiddleware/README.md): the service, the X32
+adapter (with a built-in X32 emulator for running without hardware), the
+Avalonia UI and the tests. Where the code and these pages differ in detail, the
+code and its README are current.
+
 ## Reading order
 
 | # | Document | What it covers |

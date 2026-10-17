@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XTouch.UI.ViewModels"
+             xmlns:dto="using:XTouch.Contracts"
+             x:Class="XTouch.UI.Views.ProfilesView"
+             x:DataType="vm:ProfilesViewModel">
+  <Grid ColumnDefinitions="260,12,*" RowDefinitions="*">
+    <DockPanel>
+      <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,8,0,0">
+        <TextBlock Text="Duplicate editor content as:" Classes="caption" />
+        <TextBox Text="{Binding NewId}" PlaceholderText="new-profile-id" />
+        <Button Content="Create copy" Command="{Binding DuplicateCommand}" HorizontalAlignment="Stretch" />
+      </StackPanel>
+      <Button DockPanel.Dock="Top" Content="Refresh" Command="{Binding RefreshCommand}" Margin="0,0,0,8" HorizontalAlignment="Stretch" />
+      <ListBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding Selected}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="dto:ProfileSummaryDto">
+            <StackPanel Spacing="2">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                <TextBlock Text="● active" Foreground="#36D16B" IsVisible="{Binding IsActive}" FontSize="11" VerticalAlignment="Center" />
+                <TextBlock Text="⚠ invalid" Foreground="#FF6B6B" IsVisible="{Binding !IsValid}" FontSize="11" VerticalAlignment="Center" />
+              </StackPanel>
+              <TextBlock Text="{Binding Id}" Classes="caption" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+
+    <DockPanel Grid.Column="2">
+      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+        <Button Content="Validate" Command="{Binding ValidateCommand}" />
+        <Button Content="Save" Command="{Binding SaveCommand}" Classes="accent" />
+        <Button Content="Revert" Command="{Binding RevertCommand}" />
+        <Button Content="Activate" Command="{Binding ActivateCommand}" />
+        <Button Content="Delete" Command="{Binding DeleteCommand}" />
+        <TextBlock Text="● unsaved changes" Foreground="#F2D33D" IsVisible="{Binding IsDirty}" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding Message}" VerticalAlignment="Center" Classes="caption" />
+      </StackPanel>
+      <ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding Errors}" Margin="0,8,0,0" MaxHeight="160">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String">
+            <TextBlock Text="{Binding}" Foreground="#FF6B6B" TextWrapping="Wrap" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <TextBox Text="{Binding EditorText}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
+               FontFamily="{StaticResource MonoFont}" FontSize="12"
+               ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+    </DockPanel>
+  </Grid>
+</UserControl>

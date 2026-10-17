@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XTouch.UI.ViewModels"
+             x:Class="XTouch.UI.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+  <ScrollViewer>
+    <StackPanel Spacing="18" MaxWidth="720" HorizontalAlignment="Left">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Service connection" Classes="h2" />
+        <TextBlock Text="Service URL" Classes="caption" />
+        <TextBox Text="{Binding ServiceUrl}" PlaceholderText="http://127.0.0.1:5280" />
+        <TextBlock Text="API token (only if the service sets Api:Token)" Classes="caption" />
+        <TextBox Text="{Binding Token}" PasswordChar="•" />
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Save and reconnect" Command="{Binding SaveAndReconnectCommand}" Classes="accent" />
+          <TextBlock Text="{Binding Message}" VerticalAlignment="Center" Classes="caption" />
+        </StackPanel>
+        <TextBlock Text="{Binding SettingsFile, StringFormat='UI settings file: {0}'}" Classes="caption" TextWrapping="Wrap" />
+      </StackPanel>
+
+      <StackPanel Spacing="8">
+        <TextBlock Text="MIDI ports seen by the service" Classes="h2" />
+        <Button Content="Refresh" Command="{Binding RefreshPortsCommand}" />
+        <Grid ColumnDefinitions="*,16,*">
+          <StackPanel>
+            <TextBlock Text="Inputs" Classes="caption" />
+            <ItemsControl ItemsSource="{Binding MidiInputs}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String"><TextBlock Text="{Binding}" /></DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Text="Outputs" Classes="caption" />
+            <ItemsControl ItemsSource="{Binding MidiOutputs}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String"><TextBlock Text="{Binding}" /></DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Spacing="6">
+        <TextBlock Text="Service configuration" Classes="h2" />
+        <TextBlock TextWrapping="Wrap" Classes="caption"
+                   Text="Surface port names, the X32 address and the API URL are service settings. Put them in appsettings.Local.json next to XTouch.Service (or use XTOUCH_ environment variables) and restart the service. Example:" />
+        <TextBox IsReadOnly="True" AcceptsReturn="True" FontFamily="{StaticResource MonoFont}" FontSize="12"
+                 Text="{}{&#x0a;  &quot;Surface&quot;: { &quot;InputPortName&quot;: &quot;X-TOUCH&quot;, &quot;OutputPortName&quot;: &quot;X-TOUCH&quot; },&#x0a;  &quot;Targets&quot;: { &quot;X32&quot;: { &quot;Host&quot;: &quot;192.168.1.50&quot; } }&#x0a;}" />
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

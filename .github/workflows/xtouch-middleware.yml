@@ -1,0 +1,24 @@
+name: xtouch-middleware
+
+on:
+  push:
+    paths: ["XTouchMiddleware/**", ".github/workflows/xtouch-middleware.yml"]
+  pull_request:
+    paths: ["XTouchMiddleware/**", ".github/workflows/xtouch-middleware.yml"]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: XTouchMiddleware
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - run: dotnet build XTouchMiddleware.slnx -c Release
+      - run: dotnet test XTouchMiddleware.slnx -c Release --no-build

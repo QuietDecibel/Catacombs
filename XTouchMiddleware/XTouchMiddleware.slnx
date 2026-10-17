@@ -13,5 +13,6 @@
     <Project Path="tests/XTouch.Integration.Tests/XTouch.Integration.Tests.csproj" />
     <Project Path="tests/XTouch.Surface.Tests/XTouch.Surface.Tests.csproj" />
     <Project Path="tests/XTouch.Targets.X32.Tests/XTouch.Targets.X32.Tests.csproj" />
+    <Project Path="tests/XTouch.UI.Tests/XTouch.UI.Tests.csproj" />
   </Folder>
 </Solution>

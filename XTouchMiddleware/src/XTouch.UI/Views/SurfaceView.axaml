@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XTouch.UI.ViewModels"
+             xmlns:c="using:XTouch.UI.Controls"
+             xmlns:conv="using:XTouch.UI.Converters"
+             x:Class="XTouch.UI.Views.SurfaceView"
+             x:DataType="vm:SurfaceViewModel">
+  <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <StackPanel Orientation="Horizontal" Spacing="10" Margin="4">
+
+      <!-- Channel strips -->
+      <ItemsControl ItemsSource="{Binding Strips}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="6" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:StripViewModel">
+            <Border Background="{StaticResource StripBrush}" CornerRadius="6" Padding="8" Width="98">
+              <StackPanel Spacing="8">
+                <!-- Scribble strip -->
+                <Border CornerRadius="3" Padding="4,3"
+                        Background="{Binding Color, Converter={x:Static conv:LcdColorToBrushConverter.Instance}}">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Top}" FontFamily="{StaticResource MonoFont}" FontSize="13" HorizontalAlignment="Center"
+                               Foreground="{Binding Color, Converter={x:Static conv:LcdColorToForegroundConverter.Instance}}" />
+                    <TextBlock Text="{Binding Bottom}" FontFamily="{StaticResource MonoFont}" FontSize="13" HorizontalAlignment="Center"
+                               Foreground="{Binding Color, Converter={x:Static conv:LcdColorToForegroundConverter.Instance}}" />
+                  </StackPanel>
+                </Border>
+
+                <c:RingControl HorizontalAlignment="Center" Position="{Binding RingPosition}" Mode="{Binding RingMode}"
+                               Center="{Binding RingCenter}" TurnCommand="{Binding TurnCommand}" PushCommand="{Binding PushCommand}"
+                               ToolTip.Tip="Drag up/down or scroll to turn, click to push" />
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" HorizontalAlignment="Center">
+                  <Button Grid.Row="0" Grid.Column="0" Margin="2" Content="REC" Classes="led red" Classes.lit="{Binding Rec}" Command="{Binding PressRecCommand}" />
+                  <Button Grid.Row="0" Grid.Column="1" Margin="2" Content="SOLO" Classes="led" Classes.lit="{Binding Solo}" Command="{Binding PressSoloCommand}" />
+                  <Button Grid.Row="1" Grid.Column="0" Margin="2" Content="MUTE" Classes="led red" Classes.lit="{Binding Mute}" Command="{Binding PressMuteCommand}" />
+                  <Button Grid.Row="1" Grid.Column="1" Margin="2" Content="SEL" Classes="led green" Classes.lit="{Binding Select}" Command="{Binding PressSelectCommand}" />
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,*" Height="250" HorizontalAlignment="Center">
+                  <c:MeterBar Width="8" Level="{Binding Meter}" Margin="0,13,6,13" />
+                  <c:FaderControl Grid.Column="1" Width="40" Value="{Binding Fader}" IsDragging="{Binding IsDragging}" IsTouched="{Binding Touched}" />
+                </Grid>
+
+                <TextBlock Text="{Binding ChannelKey}" Classes="caption" HorizontalAlignment="Center" />
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!-- Master -->
+      <Border Background="{StaticResource StripBrush}" CornerRadius="6" Padding="8" Width="80">
+        <StackPanel Spacing="8">
+          <TextBlock Text="MAIN" FontWeight="SemiBold" HorizontalAlignment="Center" />
+          <c:FaderControl Height="420" Width="40" HorizontalAlignment="Center"
+                          Value="{Binding Master}" IsDragging="{Binding MasterDragging}" IsTouched="{Binding MasterTouched}" />
+          <TextBlock Text="Master" Classes="caption" HorizontalAlignment="Center" />
+        </StackPanel>
+      </Border>
+
+      <!-- Display, layers, navigation -->
+      <Border Background="{StaticResource PanelBrush}" CornerRadius="6" Padding="12" Width="300">
+        <StackPanel Spacing="14">
+          <Border Background="Black" CornerRadius="4" Padding="10,6">
+            <StackPanel Orientation="Horizontal" Spacing="14">
+              <TextBlock Text="{Binding Assignment}" FontFamily="{StaticResource MonoFont}" FontSize="26" Foreground="#FF4D4D" />
+              <TextBlock Text="{Binding Timecode}" FontFamily="{StaticResource MonoFont}" FontSize="26" Foreground="#FF4D4D" />
+            </StackPanel>
+          </Border>
+          <TextBlock Text="{Binding BankText}" Classes="caption" />
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="ENCODER LAYER" Classes="caption" />
+            <ItemsControl ItemsSource="{Binding Layers}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LayerButtonViewModel">
+                  <Button Margin="0,0,6,6" Content="{Binding Label}" Classes="led wide" Classes.lit="{Binding IsActive}" Command="{Binding SelectCommand}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="FADER BANKS" Classes="caption" />
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Content="◄ BANK" Classes="led wide" Classes.lit="{Binding CanBankLeft}" Command="{Binding BankLeftCommand}" />
+              <Button Content="BANK ►" Classes="led wide" Classes.lit="{Binding CanBankRight}" Command="{Binding BankRightCommand}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Content="◄ CH" Classes="led wide" Classes.lit="{Binding CanBankLeft}" Command="{Binding ChannelLeftCommand}" />
+              <Button Content="CH ►" Classes="led wide" Classes.lit="{Binding CanBankRight}" Command="{Binding ChannelRightCommand}" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="FUNCTION KEYS" Classes="caption" />
+            <ItemsControl ItemsSource="{Binding FunctionKeys}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:FunctionKeyViewModel">
+                  <Button Margin="0,0,6,6" Content="{Binding Label}" Classes="led" Classes.lit="{Binding IsLit}" Command="{Binding PressCommand}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Content="NAME/VALUE" Classes="led" Width="100" Classes.lit="{Binding ShowEncoderValues}" Command="{Binding NameValueCommand}" />
+            <Button Content="SELF-TEST" Classes="led" Width="100" Command="{Binding SelfTestCommand}" />
+          </StackPanel>
+
+          <TextBlock TextWrapping="Wrap" Classes="caption"
+                     Text="Every control here works like the hardware: drag faders, drag or scroll encoders, click buttons. Changes appear on the X-Touch and the target." />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

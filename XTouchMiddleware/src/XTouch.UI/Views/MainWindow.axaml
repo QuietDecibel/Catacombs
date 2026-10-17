@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:XTouch.UI.ViewModels"
+        xmlns:v="using:XTouch.UI.Views"
+        xmlns:conv="using:XTouch.UI.Converters"
+        x:Class="XTouch.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="X-Touch Middleware"
+        Width="1280" Height="860" MinWidth="960" MinHeight="640"
+        Background="#141519">
+  <DockPanel>
+    <!-- Status bar -->
+    <Border DockPanel.Dock="Top" Background="{StaticResource PanelBrush}" Padding="16,10">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <TextBlock Text="X-Touch Middleware" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Ellipse Width="9" Height="9" Fill="{Binding IsServiceConnected, Converter={x:Static conv:BoolToStatusBrushConverter.Instance}}" />
+            <TextBlock Text="{Binding ServiceText}" FontSize="12" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Ellipse Width="9" Height="9" Fill="{Binding IsSurfaceConnected, Converter={x:Static conv:BoolToStatusBrushConverter.Instance}}" />
+            <TextBlock Text="{Binding SurfaceText}" FontSize="12" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Ellipse Width="9" Height="9" Fill="{Binding IsTargetConnected, Converter={x:Static conv:BoolToStatusBrushConverter.Instance}}" />
+            <TextBlock Text="{Binding TargetText}" FontSize="12" />
+          </StackPanel>
+          <TextBlock Text="{Binding ProfileText}" FontSize="12" Classes="caption" VerticalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <TabControl SelectedIndex="{Binding SelectedTab}" Padding="12">
+      <TabItem Header="Surface">
+        <v:SurfaceView DataContext="{Binding Surface}" />
+      </TabItem>
+      <TabItem Header="Profiles">
+        <v:ProfilesView DataContext="{Binding Profiles}" />
+      </TabItem>
+      <TabItem Header="Diagnostics">
+        <v:DiagnosticsView DataContext="{Binding Diagnostics}" />
+      </TabItem>
+      <TabItem Header="Settings">
+        <v:SettingsView DataContext="{Binding Settings}" />
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</Window>
