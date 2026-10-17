@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "XTouch.Service": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": { "DOTNET_ENVIRONMENT": "Production" }
+    },
+    "XTouch.Service (demo: virtual surface + X32 emulator)": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": { "DOTNET_ENVIRONMENT": "Demo" }
+    }
+  }
+}

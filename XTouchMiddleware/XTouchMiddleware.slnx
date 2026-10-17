@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/XTouch.Abstractions/XTouch.Abstractions.csproj" />
+    <Project Path="src/XTouch.Contracts/XTouch.Contracts.csproj" />
+    <Project Path="src/XTouch.Core/XTouch.Core.csproj" />
+    <Project Path="src/XTouch.Service/XTouch.Service.csproj" />
+    <Project Path="src/XTouch.Surface/XTouch.Surface.csproj" />
+    <Project Path="src/XTouch.Targets.X32/XTouch.Targets.X32.csproj" />
+    <Project Path="src/XTouch.UI/XTouch.UI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/XTouch.Core.Tests/XTouch.Core.Tests.csproj" />
+    <Project Path="tests/XTouch.Integration.Tests/XTouch.Integration.Tests.csproj" />
+    <Project Path="tests/XTouch.Surface.Tests/XTouch.Surface.Tests.csproj" />
+    <Project Path="tests/XTouch.Targets.X32.Tests/XTouch.Targets.X32.Tests.csproj" />
+  </Folder>
+</Solution>
