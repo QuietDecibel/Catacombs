@@ -8,6 +8,9 @@ public sealed class UiSettings
     public string ServiceUrl { get; set; } = "http://127.0.0.1:5280";
     public string? Token { get; set; }
 
+    /// <summary>Start XTouch.Service automatically when it is not running on this computer.</summary>
+    public bool AutoStartService { get; set; } = true;
+
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
 
     public static string FilePath => Path.Combine(

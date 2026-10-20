@@ -23,7 +23,11 @@ public sealed class App : Application
             var vm = new MainWindowViewModel(client, settings);
             desktop.MainWindow = new MainWindow { DataContext = vm };
             desktop.ShutdownRequested += (_, _) => client.DisposeAsync().AsTask().Wait(TimeSpan.FromSeconds(2));
-            _ = vm.ConnectAsync();
+            _ = Task.Run(async () =>
+            {
+                await ServiceLauncher.EnsureRunningAsync(settings);
+                await vm.ConnectAsync(); // keeps retrying while the service starts up
+            });
         }
         base.OnFrameworkInitializationCompleted();
     }

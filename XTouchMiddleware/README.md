@@ -45,10 +45,25 @@ meters. In demo mode the emulator stands in for the console:
 - Drag or scroll an encoder to turn it.
 - Click MUTE, BANK ►, the layer buttons and the other surface buttons as you would on the hardware.
 
+## Desktop shortcut (Windows)
+
+From the `XTouchMiddleware` folder, in PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Install-DesktopShortcut.ps1
+```
+
+This publishes the service and UI to `%LOCALAPPDATA%\Programs\XTouchMiddleware`
+and puts an **X-Touch Middleware** shortcut with the golden-yellow icon on your
+desktop. The UI starts the service automatically when it isn't already running
+(turn this off with `"AutoStartService": false` in the UI's `ui.json`). Run the
+script again after pulling updates; your settings and profiles are kept.
+`-SkipPublish` only recreates the shortcut.
+
 ## Running with an X-Touch and an X32
 
 1. Boot the X-Touch in **MC mode, USB interface**. Open its setup menu at power-up, choose **MC** and **USB**, then confirm. The X-Touch quick-start guide shows the button to hold; it is usually channel 1 SELECT.
-2. Create `appsettings.Local.json` next to the service executable:
+2. Create `appsettings.Local.json` next to the service executable (`%LOCALAPPDATA%\Programs\XTouchMiddleware\service` if you used the shortcut script):
    ```json
    {
      "Surface": { "Transport": "Midi", "InputPortName": "X-TOUCH", "OutputPortName": "X-TOUCH" },

@@ -6,6 +6,7 @@
         x:Class="XTouch.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="X-Touch Middleware"
+        Icon="/Assets/xtouch.ico"
         Width="1280" Height="860" MinWidth="960" MinHeight="640"
         Background="#141519">
   <DockPanel>
